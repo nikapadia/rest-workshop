@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
-    const limit = req.query.limit || 10;
+    const limit = req.query.limit || -1;
     const offset = req.query.offset || 0;
     db.all('SELECT * FROM users LIMIT ? OFFSET ?', limit, offset, (err, rows) => {
         res.json(rows);
@@ -92,9 +92,37 @@ app.patch('/users/:id', (req, res) => {
     });
 });
 
+app.put('/users/:id', (req, res) => {
+    const id = req.params.id;
+    const { name, age, email } = req.body;
+
+    if (!name) {
+        res.status(400).send('Name is required to update a user');
+        return;
+    }
+    const finalAge = age !== undefined ? age : null;
+    const finalEmail = email !== undefined ? email : null;
+
+    db.run('UPDATE users SET name = ?, age = ?, email = ? WHERE id = ?', name, finalAge, finalEmail, id, (err) => {
+        if (this.changes === 0) {
+            res.status(404).send('User not found');
+            return;
+        }
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        res.json({ id });
+    });
+});
+
 app.delete('/users/:id', (req, res) => {
     const id = req.params.id;
     db.run('DELETE FROM users WHERE id = ?', id, (err) => {
+        if (this.changes === 0) {
+            res.status(404).send('User not found');
+            return;
+        }
         if (err) {
             res.status(500).send
             return;
