@@ -9,6 +9,6 @@ Make sure you have Node.js and npm installed on your machine. If not, you can do
 3. Run `npm install`
 4. Run `npm start`
 
-You can also modify `package.json` file to use `node` instead of `nodemon` if you don't want to install `nodemon` globally.
+You can also modify `package.json` to use `node` instead of `nodemon` if you don't want to install `nodemon` globally.
 
 
